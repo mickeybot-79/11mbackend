@@ -11,14 +11,15 @@ const commentSchema = new Schema({
 const postSchema = new Schema({
     title: String,
     content: String,
-    summary: String,
+    heading: String,
     thumbnail: String,
     imgDesc: String,
-    imgCredits: String,
+    imgCred: String,
     author: String,
     date: String,
     comments: [commentSchema],
     tags: Array,
+    searchField: String
 })
 
 module.exports = mongoose.model('Post', postSchema)

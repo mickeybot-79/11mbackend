@@ -22,6 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "los-11-metros-backend": "file:",
-    "mongoose": "^8.1.0"
+    "mongoose": "^8.1.0",
+    "uuid": "^10.0.0"
   }
 }

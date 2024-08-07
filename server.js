@@ -27,7 +27,6 @@ app.use('/refresh', require('./routes/auth'))
 app.use('/logout', require('./routes/auth'))
 app.use('/posts', require('./routes/posts'))
 
-
 mongoose.connection.once('open', () => {
    console.log('Connected to MongoDB')
    app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
