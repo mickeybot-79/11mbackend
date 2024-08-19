@@ -5,7 +5,9 @@ const commentSchema = new Schema({
     user: String,
     date: String,
     content: String,
-    likes: String
+    likes: Number,
+    replies: [],
+    searchField: String,
 })
 
 const postSchema = new Schema({
@@ -19,7 +21,8 @@ const postSchema = new Schema({
     date: String,
     comments: [commentSchema],
     tags: Array,
-    searchField: String
+    searchField: String,
+    views: Number
 })
 
 module.exports = mongoose.model('Post', postSchema)
