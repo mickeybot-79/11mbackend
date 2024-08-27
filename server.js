@@ -4,17 +4,17 @@ const app = express()
 const cors = require('cors')
 const corsOptions = require('./config/corsOptions')
 const cookieParser = require('cookie-parser')
-const credentials = require('./middleware/credentials')
+//const credentials = require('./middleware/credentials')
 const mongoose = require('mongoose')
 const connectDB = require('./config/dbConn')
 const PORT = process.env.PORT || 3500
 
 connectDB()
 
-app.use(credentials)
+//app.use(credentials)
 
-//app.use(cors())
-app.use(cors(corsOptions))
+app.use(cors())
+//app.use(cors(corsOptions))
 
 app.use(express.json({limit: "500mb", extended: true}))
 app.use(express.urlencoded({limit: "500mb", extended: true, parameterLimit: 50000}))
