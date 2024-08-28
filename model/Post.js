@@ -1,11 +1,18 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+const replySchema = new Schema({
+    user: String,
+    date: String,
+    content: String,
+    replyTo: String
+})
+
 const commentSchema = new Schema({
     user: String,
     date: String,
     content: String,
-    replies: [],
+    replies: [replySchema],
     searchField: String,
 })
 

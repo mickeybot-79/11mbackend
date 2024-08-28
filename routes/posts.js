@@ -8,6 +8,8 @@ router.post('/new', postsController.createPost)
 
 router.put('/comment', postsController.addComment)
 
+router.put('/comment/reply', postsController.addReply)
+
 router.post('/tags/new', postsController.addTag)
 
 router.get('/tags', postsController.getTags)
