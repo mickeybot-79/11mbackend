@@ -15,7 +15,7 @@ const shareTest = async (req, res) => {
             <meta name="og:url" content="${url}" />
             <meta name="og:title" content="${title} " />
             <meta name="og:description" content="${description} " />
-            <meta name="og:image" content="${image} " />
+            <meta name="og:image" content="${image}" />
             <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
             <title>Los 11 Metros</title>
         </head>
