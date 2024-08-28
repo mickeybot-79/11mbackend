@@ -15,7 +15,6 @@ const shareTest = async (req, res) => {
             <meta name="og:title" content="${title}" />
             <meta name="og:description" content="${description}" />
             <meta name="og:image" content="${image}" />
-            <meta http-equiv="refresh" content="1; ${url}" />
             <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
             <title>Los 11 Metros</title>
         </head>
@@ -25,6 +24,7 @@ const shareTest = async (req, res) => {
             </div>
         </body>
         </html>`
+        // <meta http-equiv="refresh" content="1; ${url}" />
     try {
         const data = await fsPromises.writeFile('C:/Users/micha/Desktop/Mat Project/Backend/public/index.html', initialText)
         console.log(data)
