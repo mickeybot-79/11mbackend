@@ -8,7 +8,6 @@ const shareTest = async (req, res) => {
         <html lang="en">
         <head>
             <meta charset="utf-8" />
-            <link rel="icon" href="%PUBLIC_URL%/favicon.png" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <meta name="theme-color" content="#000000" />
             <meta name="og:type" content="object" />
@@ -16,12 +15,14 @@ const shareTest = async (req, res) => {
             <meta name="og:title" content="${title}" />
             <meta name="og:description" content="${description}" />
             <meta name="og:image" content="${image}" />
+            <meta http-equiv="refresh" content="1; ${url}" />
             <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
             <title>Los 11 Metros</title>
         </head>
         <body>
             <noscript>You need to enable JavaScript to run this app.</noscript>
-            <div id="root"></div>
+            <div id="root">
+            </div>
         </body>
         </html>`
     try {
