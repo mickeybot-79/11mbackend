@@ -16,6 +16,12 @@ connectDB()
 app.use(cors())
 //app.use(cors(corsOptions))
 
+app.use(express.static(__dirname + 'Backend/public'))
+
+app.get('/share', (req, res) => {
+    res.sendFile('/index.html', {root: __dirname})
+})
+
 app.use(express.json({limit: "500mb", extended: true}))
 app.use(express.urlencoded({limit: "500mb", extended: true, parameterLimit: 50000}))
 
