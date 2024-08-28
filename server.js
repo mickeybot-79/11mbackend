@@ -16,7 +16,7 @@ connectDB()
 app.use(cors())
 //app.use(cors(corsOptions))
 
-app.use(express.static(__dirname + 'Backend/public'))
+app.use(express.static(__dirname + '/public'))
 
 app.get('/share', (req, res) => {
     res.sendFile('/index.html', {root: __dirname})
