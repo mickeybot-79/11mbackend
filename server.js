@@ -19,7 +19,7 @@ app.use(cors())
 app.use(express.static(__dirname + '/public'))
 
 app.get('/share', (req, res) => {
-    res.sendFile('/index.html', {root: __dirname})
+    res.sendFile('public/index.html', {root: __dirname})
 })
 
 app.use(express.json({limit: "500mb", extended: true}))
