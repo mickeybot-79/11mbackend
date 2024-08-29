@@ -25,6 +25,7 @@ app.get('/share/:id', async (req, res) => {
    console.log(post)
    //res.sendFile(`public/${post}.html`, {root: __dirname})
    const selectedPost = await Share.findOne({ postId: post }).exec()
+   console.log(selectedPost)
    res.json(selectedPost.content)
 })
 
