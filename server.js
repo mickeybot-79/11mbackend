@@ -24,11 +24,9 @@ app.get('/share/:id', async (req, res) => {
    const post = req.url.split('/')[2].split('?')[0]
    console.log(post)
    //res.sendFile(`public/${post}.html`, {root: __dirname})
-   const allPosts = await Share.find()
-   console.log(allPosts)
    const selectedPost = await Share.findOne({ postId: post }).exec()
-   console.log(selectedPost)
-   res.json(selectedPost)
+   //console.log(selectedPost)
+   res.json(selectedPost.content)
 })
 
 app.use(express.json({limit: "500mb", extended: true}))
