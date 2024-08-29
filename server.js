@@ -18,8 +18,10 @@ app.use(cors())
 
 app.use(express.static(__dirname + '/public'))
 
-app.get('/share', (req, res) => {
-    res.sendFile('public/index.html', {root: __dirname})
+app.get('/share/:id', (req, res) => {
+   const post = req.url.split('/')[2].split('?')[0]
+   console.log(post)
+   res.sendFile(`public/${post}.html`, {root: __dirname})
 })
 
 app.use(express.json({limit: "500mb", extended: true}))
