@@ -1,4 +1,5 @@
-const fsPromises = require('fs').promises
+//const fsPromises = require('fs').promises
+const Share = require('../model/Share')
 
 const shareTest = async (req, res) => {
     const {post, url, title, description, image} = req.body[0]
@@ -17,14 +18,20 @@ const shareTest = async (req, res) => {
             <meta name="og:image" content="${image}" />
             <meta http-equiv="refresh" content="1; ${url}" />
         </head>
-        <body>
-        </body>
+            <body>
+            </body>
         </html>`
     try {
-        const data = await fsPromises.writeFile(`C:/Users/micha/Desktop/Mat Project/Backend/public/${post}.html`, initialText)
-        console.log(data)
+        //const data = await fsPromises.writeFile(`C:/Users/micha/Desktop/Mat Project/Backend/public/${post}.html`, initialText)
+        //console.log(data)
+        const result = await Share.create({
+            postId: post,
+            content: initialText
+        })
+        res.status(201).json(result)
     } catch (err) {
         console.log(err)
+        res.status(500).json({ 'message': err.message })
     }
     res.sendStatus(201)
 }
