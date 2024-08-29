@@ -28,7 +28,8 @@ const postSchema = new Schema({
     comments: [commentSchema],
     tags: Array,
     searchField: String,
-    views: Number
+    views: Number,
+    insPost: String
 })
 
 module.exports = mongoose.model('Post', postSchema)
