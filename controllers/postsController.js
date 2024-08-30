@@ -26,6 +26,7 @@ const createPost = async (req, res) => {
     const searchField = uuid()
     const extension = thumbnail.split('/')[1].split(';')[0]
     const fileExtension = extension === 'jpeg' ? 'jpg' : extension === 'png' ? 'png' : 'webp'
+    const shareText = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="theme-color" content="#000000" /><meta name="og:type" content="object" /><meta name="og:url" content="https://oncemetros.onrender.com/post/${searchField}" /><meta name="og:title" content="${title}" /><meta name="og:description" content="${heading.split('\n')[0]}" /><meta name="og:image" content="${thumbnail.split('/')[2]}" /><meta http-equiv="refresh" content="1; https://oncemetros.onrender.com/post/${searchField}" /></head><body></body></html>`
     try {
         const result = await Post.create({
             title,
@@ -40,6 +41,7 @@ const createPost = async (req, res) => {
             tags,
             searchField,
             insPost,
+            share: shareText,
             views: 0
         })
         res.status(201).json(result)
@@ -110,13 +112,4 @@ const getTags = async (req, res) => {
     res.json(allTags)
 }
 
-const sendShareContent = async (req, res) => {
-    //console.log(req.url)
-    const post = req.url.split('/')[2].split('?')[0]
-    console.log(post)
-    const selectedPost = await Post.findOne({ searchField: post }).exec()
-    //console.log(selectedPost)
-    res.send(selectedPost.share)
-}
-
-module.exports = { getPosts, createPost, addComment, addReply, addTag, getTags, sendShareContent }
+module.exports = { getPosts, createPost, addComment, addReply, addTag, getTags }

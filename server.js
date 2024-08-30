@@ -19,12 +19,9 @@ app.use(cors())
 //app.use(cors(corsOptions))
 
 
-app.get('/share/:id', async (req, res) => {
-   //console.log(req.url)
+app.get('/share', async (req, res) => {
    const post = req.url.split('/')[2].split('?')[0]
-   console.log(post)
    const selectedPost = await Post.findOne({ searchField: post }).exec()
-   //console.log(selectedPost)
    res.send(selectedPost.share)
 })
 
