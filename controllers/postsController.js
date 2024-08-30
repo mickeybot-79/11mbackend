@@ -111,9 +111,11 @@ const getTags = async (req, res) => {
 }
 
 const sendShareContent = async (req, res) => {
-    const post = req.url.split('/')[3].split('?')[0]
+    //console.log(req.url)
+    const post = req.url.split('/')[2].split('?')[0]
+    //console.log(post)
     const selectedPost = await Post.findOne({ searchField: post }).exec()
-    console.log(selectedPost.share)
+    //console.log(selectedPost)
     res.send(selectedPost.share)
 }
 
