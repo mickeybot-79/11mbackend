@@ -23,10 +23,10 @@ app.use(express.static(__dirname + '/public'))
 app.get('/share/:id', async (req, res) => {
    const post = req.url.split('/')[2].split('?')[0]
    //console.log(post)
-   res.sendFile(`public/${post}.html`, {root: __dirname})
-   //const selectedPost = await Share.findOne({ postId: post }).exec()
+   //res.sendFile(`public/${post}.html`, {root: __dirname})
+   const selectedPost = await Share.findOne({ postId: post }).exec()
    //console.log(selectedPost)
-   //res.json(selectedPost.content)
+   res.json(selectedPost.content)
 })
 
 app.use(express.json({limit: "500mb", extended: true}))

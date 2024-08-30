@@ -17,7 +17,8 @@ const createPost = async (req, res) => {
         imgDesc,
         imgCred,
         author,
-        tags
+        tags,
+        insPost
     } = req.body
     const duplicate = await Post.findOne({ title: title }).exec()
     if (duplicate) return res.status(400).json({ 'message': `La publicación "${title}" ya existe.` })
@@ -38,6 +39,7 @@ const createPost = async (req, res) => {
             comments: [],
             tags,
             searchField,
+            insPost,
             views: 0
         })
         res.status(201).json(result)
