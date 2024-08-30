@@ -17,6 +17,6 @@ router.get('/tags', postsController.getTags)
 
 router.post('/share', shareController.shareTest)
 
-router.get('/share', postsController.sendShareContent)
+router.get('/share/:id', postsController.sendShareContent)
 
 module.exports = router
