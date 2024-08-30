@@ -1,4 +1,3 @@
-//const Share = require('../model/Share')
 const Post = require('../model/Post')
 
 const shareTest = async (req, res) => {
