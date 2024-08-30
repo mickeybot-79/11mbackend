@@ -9,7 +9,7 @@ const mongoose = require('mongoose')
 const connectDB = require('./config/dbConn')
 const PORT = process.env.PORT || 3500
 
-const Share = require('./model/Share')
+const Post = require('./model/Post')
 
 connectDB()
 
@@ -24,9 +24,9 @@ app.get('/share/:id', async (req, res) => {
    const post = req.url.split('/')[2].split('?')[0]
    //console.log(post)
    //res.sendFile(`public/${post}.html`, {root: __dirname})
-   const selectedPost = await Share.findOne({ postId: post }).exec()
-   //console.log(selectedPost)
-   res.send(selectedPost.content)
+   const selectedPost = await Post.findOne({ searchField: post }).exec()
+   console.log(selectedPost)
+   res.send(selectedPost.share)
 })
 
 app.use(express.json({limit: "500mb", extended: true}))
