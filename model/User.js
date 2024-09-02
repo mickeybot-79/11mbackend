@@ -2,8 +2,10 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const userSchema = new Schema({
-    username: String,
+    usrnme: String,
     password: String,
+    image: String,
+    aboutme: String,
     refreshToken: String,
     createdOn: String
 })

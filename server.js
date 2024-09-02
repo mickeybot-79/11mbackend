@@ -18,24 +18,19 @@ connectDB()
 app.use(cors())
 //app.use(cors(corsOptions))
 
+app.use(express.json({limit: "500mb", extended: true}))
+app.use(express.urlencoded({limit: "500mb", extended: true, parameterLimit: 50000}))
+
+app.use(cookieParser())
+
+app.use('/auth', require('./routes/auth'))
+app.use('/posts', require('./routes/posts'))
 
 app.get('/share/:id', async (req, res) => {
    const post = req.url.split('/')[2].split('?')[0]
    const selectedPost = await Post.findOne({ searchField: post }).exec()
    res.send(selectedPost.share)
 })
-
-
-app.use(express.json({limit: "500mb", extended: true}))
-app.use(express.urlencoded({limit: "500mb", extended: true, parameterLimit: 50000}))
-
-app.use(cookieParser())
-
-app.use('/register', require('./routes/auth'))
-app.use('/auth', require('./routes/auth'))
-app.use('/refresh', require('./routes/auth'))
-app.use('/logout', require('./routes/auth'))
-app.use('/posts', require('./routes/posts'))
 
 mongoose.connection.once('open', () => {
    console.log('Connected to MongoDB')

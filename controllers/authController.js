@@ -3,20 +3,42 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 const handleNewUser = async (req, res) => {
-    const { user, pwd } = req.body
-    if (!user) return res.sendStatus(400) //'message': 'Username and password are required.'
-    const duplicate = await User.findOne({ username: user }).exec()
+    const { username, password, image, aboutme } = req.body
+    const duplicate = await User.findOne({ usrnme: username }).exec()
     if (duplicate) return res.sendStatus(409) //'error': `User ${user} already exists.`
     try {
-        if (pwd) var hashedPwd = await bcrypt.hash(pwd, 10)
-        const date = new Date()
-        const today = date.getTime()
+        if (password) var hashedPwd = await bcrypt.hash(password, 10)
+        const today = Date.now()
         const result = await User.create({
-            "username": user,
-            "password": hashedPwd,
-            "createdOn": today
+            usrnme: username,
+            password: hashedPwd,
+            image,
+            aboutme,
+            createdOn: today,
+            refreshToken: ''
         })
-        res.status(201).json({'user': result}) //'success': `New user ${user} created!`
+        const accessToken = jwt.sign(
+            {
+                "UserInfo": {
+                    "username": username,
+                    "id": result._id
+                }
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: '30m' }
+        )
+        const refreshToken = jwt.sign(
+            { "username": username },
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: '90d' }
+        )
+        result.refreshToken = refreshToken
+        try {
+            await result.save()
+        } catch (er) {
+            res.status(500).json({'message': err.message})
+        }
+        res.status(201).json({accessToken}) //'success': `New user ${user} created!`
     } catch (err) {
         res.status(500).json({'message': err.message})
     }
