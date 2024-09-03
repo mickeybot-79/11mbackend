@@ -13,6 +13,12 @@ const Post = require('./model/Post')
 
 connectDB()
 
+app.get('/share/:id', async (req, res) => {
+   const post = req.url.split('/')[2].split('?')[0]
+   const selectedPost = await Post.findOne({ searchField: post }).exec()
+   res.send(selectedPost.share)
+})
+
 app.use(credentials)
 
 //app.use(cors())
@@ -25,12 +31,6 @@ app.use(cookieParser())
 
 app.use('/auth', require('./routes/auth'))
 app.use('/posts', require('./routes/posts'))
-
-app.get('/share/:id', async (req, res) => {
-   const post = req.url.split('/')[2].split('?')[0]
-   const selectedPost = await Post.findOne({ searchField: post }).exec()
-   res.send(selectedPost.share)
-})
 
 mongoose.connection.once('open', () => {
    console.log('Connected to MongoDB')
