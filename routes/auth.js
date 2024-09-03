@@ -10,4 +10,6 @@ router.get('/refresh', authController.handleRefreshToken)
 
 router.post('/logout', authController.handleLogout)
 
+router.get('/user/:id', authController.getUserData)
+
 module.exports = router

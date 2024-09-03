@@ -1,31 +1,36 @@
 const User = require('../model/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const {v4 : uuid} = require('uuid')
 
 const handleNewUser = async (req, res) => {
     const { username, password, image, aboutme } = req.body
-    const duplicate = await User.findOne({ usrnme: username }).exec()
-    if (duplicate) return res.sendStatus(409) //'error': `User ${user} already exists.`
+    const duplicate = await User.findOne({ username: username }).exec()
+    if (duplicate) return res.status(409).json({'error': `User ${username} already exists.`})
     try {
         if (password) var hashedPwd = await bcrypt.hash(password, 10)
         const today = Date.now()
+        const userId = uuid()
         const result = await User.create({
-            usrnme: username,
+            username,
             password: hashedPwd,
             image,
             aboutme,
             createdOn: today,
-            refreshToken: ''
+            refreshToken: '',
+            userId,
+            roles: []
         })
         const accessToken = jwt.sign(
             {
                 "UserInfo": {
                     "username": username,
-                    "id": result._id
+                    "id": result.userId,
+                    "roles": result.roles
                 }
             },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '30m' }
+            { expiresIn: '1d' }
         )
         const refreshToken = jwt.sign(
             { "username": username },
@@ -36,30 +41,32 @@ const handleNewUser = async (req, res) => {
         try {
             await result.save()
         } catch (er) {
-            res.status(500).json({'message': err.message})
+            res.status(500).json({'message': er.message})
         }
-        res.status(201).json({accessToken}) //'success': `New user ${user} created!`
+        res.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000  * 90, sameSite: 'None', secure: true})
+        res.status(200).json({accessToken}) //'success': `New user ${user} created!`
     } catch (err) {
         res.status(500).json({'message': err.message})
     }
 }
 
 const handleLogin = async (req,res) => {
-    const { user, pwd } = req.body
-    if (!user || !pwd) return res.sendStatus(400) //'message': 'Username and password are required.'
-    const foundUser = await User.findOne({ username: user }).exec()
+    const { username, password } = req.body
+    if (!username || !password) return res.sendStatus(400) //'message': 'Username and password are required.'
+    const foundUser = await User.findOne({ username: username }).exec()
     if (!foundUser) return res.sendStatus(401) //'error': 'Incorrect Username or password'
-    const match = await bcrypt.compare(pwd, foundUser.password)
+    const match = bcrypt.compare(password, foundUser.password)
     if (match) {
         const accessToken = jwt.sign(
             {
                 "UserInfo": {
                     "username": foundUser.username,
-                    "id": foundUser._id
+                    "id": foundUser.userId,
+                    "roles": foundUser.roles
                 }
             },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '30m' }
+            { expiresIn: '1d' }
         )
         const refreshToken = jwt.sign(
             { "username": foundUser.username },
@@ -77,9 +84,11 @@ const handleLogin = async (req,res) => {
 
 const handleRefreshToken = async (req,res) => {
     const cookies = req.cookies
+    //console.log(cookies)
     if (!cookies?.jwt) return res.sendStatus(401)
     const refreshToken = cookies.jwt
     const foundUser = await User.findOne({ refreshToken: refreshToken }).exec()
+    //console.log(foundUser)
     if (!foundUser) return res.sendStatus(403) //'error': 'User not found'
     jwt.verify(
         refreshToken,
@@ -90,11 +99,12 @@ const handleRefreshToken = async (req,res) => {
                 {
                     "UserInfo": {
                         "username": foundUser.username,
-                        "id": foundUser._id
+                        "id": foundUser.userId,
+                        "roles": foundUser.roles
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: '30m' }
+                { expiresIn: '1d' }
             )
             res.json({ accessToken })
         }
@@ -116,9 +126,27 @@ const handleLogout = async (req,res) => {
     res.sendStatus(204)
 }
 
+const getUserData = async (req, res) => {
+    const userId = req.url.split('/')[2]
+    //console.log(userId)
+    if (userId !== '') {
+        const foundUser = await User.findOne({ userId: userId }).exec()
+        const returnData = {
+            username: foundUser.username,
+            image: foundUser.image,
+            aboutme: foundUser.aboutme,
+            roles: foundUser.roles
+        }
+        res.json(returnData)
+    } else {
+        res.sendStatus(201)
+    }
+}
+
 module.exports = { 
     handleNewUser,
     handleLogin,
     handleRefreshToken,
-    handleLogout
+    handleLogout,
+    getUserData
 }
