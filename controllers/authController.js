@@ -129,7 +129,7 @@ const handleLogout = async (req,res) => {
 const getUserData = async (req, res) => {
     const userId = req.url.split('/')[2]
     //console.log(userId)
-    if (userId !== '') {
+    if (userId !== 'noUser') {
         const foundUser = await User.findOne({ userId: userId }).exec()
         const returnData = {
             username: foundUser.username,
