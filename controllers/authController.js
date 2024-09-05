@@ -6,7 +6,7 @@ const {v4 : uuid} = require('uuid')
 const handleNewUser = async (req, res) => {
     const { username, password, image, aboutme } = req.body
     const duplicate = await User.findOne({ username: username }).exec()
-    if (duplicate) return res.status(409).json({'error': `User ${username} already exists.`})
+    if (duplicate) return res.status(409).json({'error': 'El nombre de usuario ya está en uso.'})
     try {
         if (password) var hashedPwd = await bcrypt.hash(password, 10)
         const today = Date.now()
@@ -19,7 +19,7 @@ const handleNewUser = async (req, res) => {
             createdOn: today,
             refreshToken: '',
             userId,
-            roles: []
+            roles: ['User']
         })
         const accessToken = jwt.sign(
             {
@@ -44,7 +44,7 @@ const handleNewUser = async (req, res) => {
             res.status(500).json({'message': er.message})
         }
         res.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000  * 90, sameSite: 'None', secure: true})
-        res.status(200).json({accessToken}) //'success': `New user ${user} created!`
+        res.status(200).json({accessToken})
     } catch (err) {
         res.status(500).json({'message': err.message})
     }
@@ -54,8 +54,8 @@ const handleLogin = async (req,res) => {
     const { username, password } = req.body
     if (!username || !password) return res.sendStatus(400) //'message': 'Username and password are required.'
     const foundUser = await User.findOne({ username: username }).exec()
-    if (!foundUser) return res.sendStatus(401) //'error': 'Incorrect Username or password'
-    const match = bcrypt.compare(password, foundUser.password)
+    if (!foundUser) return res.status(401).json({'error': 'Usuario o contraseña incorrectos'}) //'error': 'Incorrect Username or password'
+    const match = await bcrypt.compare(password, foundUser.password)
     if (match) {
         const accessToken = jwt.sign(
             {
@@ -78,7 +78,7 @@ const handleLogin = async (req,res) => {
         res.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000  * 90, sameSite: 'None', secure: true})
         res.json({ accessToken })
     } else {
-        res.sendStatus(401) //'error': 'Incorrect Username or password'
+        res.status(401).json({'error': 'Usuario o contraseña incorrectos'})
     }
 }
 
