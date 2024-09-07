@@ -84,11 +84,9 @@ const handleLogin = async (req,res) => {
 
 const handleRefreshToken = async (req,res) => {
     const cookies = req.cookies
-    //console.log(cookies)
     if (!cookies?.jwt) return res.sendStatus(401)
     const refreshToken = cookies.jwt
     const foundUser = await User.findOne({ refreshToken: refreshToken }).exec()
-    //console.log(foundUser)
     if (!foundUser) return res.sendStatus(403) //'error': 'User not found'
     jwt.verify(
         refreshToken,

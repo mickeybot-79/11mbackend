@@ -16,7 +16,8 @@ const createPost = async (req, res) => {
         thumbnail,
         imgDesc,
         imgCred,
-        author,
+        authorName,
+        authorId,
         tags,
         insPost
     } = req.body
@@ -24,18 +25,20 @@ const createPost = async (req, res) => {
     if (duplicate) return res.status(400).json({ 'message': `La publicación "${title}" ya existe.` })
     const today = Date.now()
     const searchField = uuid()
-    const extension = thumbnail.split('/')[1].split(';')[0]
-    const fileExtension = extension === 'jpeg' ? 'jpg' : extension === 'png' ? 'png' : 'webp'
+    //const extension = thumbnail.split('/')[1].split(';')[0]
+    //const fileExtension = extension === 'jpeg' ? 'jpg' : extension === 'png' ? 'png' : 'webp'
     const shareText = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="theme-color" content="#000000" /><meta name="og:type" content="object" /><meta name="og:url" content="https://oncemetros.onrender.com/post/${searchField}" /><meta name="og:title" content="${title}" /><meta name="og:description" content="${heading.split('\n')[0]}" /><meta name="og:image" content="${thumbnail.split('/')[2]}" /><meta http-equiv="refresh" content="1; https://oncemetros.onrender.com/post/${searchField}" /></head><body></body></html>`
     try {
         const result = await Post.create({
             title,
             content,
             heading,
-            thumbnail: `../Images/${searchField}.${fileExtension}`,
+            //thumbnail: `../Images/${searchField}.${fileExtension}`,
+            thumbnail,
             imgDesc,
             imgCred,
-            author,
+            authorName,
+            authorId,
             date: today,
             comments: [],
             tags,
