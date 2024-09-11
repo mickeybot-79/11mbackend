@@ -19,7 +19,8 @@ const handleNewUser = async (req, res) => {
             createdOn: today,
             refreshToken: '',
             userId,
-            roles: ['User']
+            roles: ['User'],
+            posts: []
         })
         const accessToken = jwt.sign(
             {
@@ -141,10 +142,25 @@ const getUserData = async (req, res) => {
     }
 }
 
+const getUserProfile = async (req, res) => {
+    const userId = req.url.split('/')[2]
+    const foundUser = await User.findOne({ userId: userId }).exec()
+    if (!foundUser) return res.sendStatus(404) //'error': 'User not found'
+    const infoToReturn = {
+        username: foundUser.username,
+        image: foundUser.image,
+        aboutme: foundUser.aboutme,
+        memberSince: foundUser.createdOn,
+        posts: foundUser.posts
+    }
+    res.status(200).json(infoToReturn)
+}
+
 module.exports = { 
     handleNewUser,
     handleLogin,
     handleRefreshToken,
     handleLogout,
-    getUserData
+    getUserData,
+    getUserProfile
 }

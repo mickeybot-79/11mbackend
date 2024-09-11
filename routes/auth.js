@@ -12,4 +12,6 @@ router.post('/logout', authController.handleLogout)
 
 router.get('/user/:id', authController.getUserData)
 
+router.get('/profile/:id', authController.getUserProfile)
+
 module.exports = router

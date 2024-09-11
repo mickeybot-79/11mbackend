@@ -1,4 +1,5 @@
 const Post = require('../model/Post')
+const User = require('../model/User')
 const Tag = require('../model/Tags')
 const {v4 : uuid} = require('uuid')
 
@@ -27,13 +28,13 @@ const createPost = async (req, res) => {
     const searchField = uuid()
     //const extension = thumbnail.split('/')[1].split(';')[0]
     //const fileExtension = extension === 'jpeg' ? 'jpg' : extension === 'png' ? 'png' : 'webp'
-    const shareText = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="theme-color" content="#000000" /><meta name="og:type" content="object" /><meta name="og:url" content="https://oncemetros.onrender.com/post/${searchField}" /><meta name="og:title" content="${title}" /><meta name="og:description" content="${heading.split('\n')[0]}" /><meta name="og:image" content="${thumbnail.split('/')[2]}" /><meta http-equiv="refresh" content="1; https://oncemetros.onrender.com/post/${searchField}" /></head><body></body></html>`
+    const authorUser = await User.findOne({ userId: authorId }).exec()
+    const shareText = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="theme-color" content="#000000" /><meta name="og:type" content="object" /><meta name="og:url" content="https://oncemetros.onrender.com/post/${searchField}" /><meta name="og:title" content="${title}" /><meta name="og:description" content="${heading.split('\n')[0]}" /><meta name="og:image" content="${thumbnail}" /><meta http-equiv="refresh" content="1; https://oncemetros.onrender.com/post/${searchField}" /></head><body></body></html>`
     try {
         const result = await Post.create({
             title,
             content,
             heading,
-            //thumbnail: `../Images/${searchField}.${fileExtension}`,
             thumbnail,
             imgDesc,
             imgCred,
@@ -45,8 +46,15 @@ const createPost = async (req, res) => {
             searchField,
             insPost,
             share: shareText,
-            views: 0
+            views: 0,
+            viewedBy: []
         })
+        authorUser.posts.push(searchField)
+        try {
+            await authorUser.save()
+        } catch (err) {
+            console.log('failed to add post to author:', err)
+        }
         res.status(201).json(result)
     } catch (err) {
         res.status(500).json({ 'message': err.message })
@@ -111,7 +119,7 @@ const addTag = async (req, res) => {
 
 const getTags = async (req, res) => {
     const allTags = await Tag.find()
-    if (!allTags) return res.sendStatus(204) //'message': 'No posts found.'
+    if (!allTags) return res.sendStatus(204) //'message': 'No tags found.'
     res.json(allTags)
 }
 

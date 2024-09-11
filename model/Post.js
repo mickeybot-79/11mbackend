@@ -31,7 +31,8 @@ const postSchema = new Schema({
     searchField: String,
     views: Number,
     insPost: String,
-    share: String
+    share: String,
+    viewedBy: []
 })
 
 module.exports = mongoose.model('Post', postSchema)

@@ -9,7 +9,8 @@ const userSchema = new Schema({
     refreshToken: String,
     createdOn: String,
     userId: String,
-    roles: []
+    roles: [],
+    posts: []
 })
 
 module.exports = mongoose.model('User', userSchema)
