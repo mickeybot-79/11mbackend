@@ -88,7 +88,10 @@ const handleRefreshToken = async (req,res) => {
     if (!cookies?.jwt) return res.sendStatus(401)
     const refreshToken = cookies.jwt
     const foundUser = await User.findOne({ refreshToken: refreshToken }).exec()
-    if (!foundUser) return res.sendStatus(403) //'error': 'User not found'
+    if (!foundUser) {
+        res.clearCookie('jwt', {httpOnly: true, sameSite: 'None', secure:true})
+        return res.sendStatus(403)
+    }
     jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET,
@@ -127,7 +130,6 @@ const handleLogout = async (req,res) => {
 
 const getUserData = async (req, res) => {
     const userId = req.url.split('/')[2]
-    //console.log(userId)
     if (userId !== 'noUser') {
         const foundUser = await User.findOne({ userId: userId }).exec()
         const returnData = {
@@ -138,7 +140,7 @@ const getUserData = async (req, res) => {
         }
         res.json(returnData)
     } else {
-        res.sendStatus(201)
+        res.sendStatus(204)
     }
 }
 
