@@ -21,8 +21,8 @@ app.get('/share/:id', async (req, res) => {
 
 app.use(credentials)
 
-app.use(cors())
-//app.use(cors(corsOptions))
+//app.use(cors())
+app.use(cors(corsOptions))
 
 app.use(express.json({limit: "500mb", extended: true}))
 app.use(express.urlencoded({limit: "500mb", extended: true, parameterLimit: 50000}))
