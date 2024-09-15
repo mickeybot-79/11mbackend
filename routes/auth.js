@@ -14,4 +14,6 @@ router.get('/user/:id', authController.getUserData)
 
 router.get('/profile/:id', authController.getUserProfile)
 
+router.put('/update', authController.updateUserData)
+
 module.exports = router

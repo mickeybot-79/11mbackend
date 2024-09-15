@@ -134,6 +134,7 @@ const getUserData = async (req, res) => {
         const foundUser = await User.findOne({ userId: userId }).exec()
         const returnData = {
             username: foundUser.username,
+            password: foundUser.password,
             image: foundUser.image,
             aboutme: foundUser.aboutme,
             roles: foundUser.roles
@@ -158,11 +159,30 @@ const getUserProfile = async (req, res) => {
     res.status(200).json(infoToReturn)
 }
 
+const updateUserData = async (req, res) => {
+    const { userData } = req.body
+    const foundUser = await User.findOne({ userId: userData.userId }).exec()
+    if (!foundUser) return res.sendStatus(404)
+    if (userData.password) {
+        const hashedPwd = await bcrypt.hash(userData.password, 10)
+        foundUser.password = hashedPwd
+    }
+    foundUser.image = userData.image
+    foundUser.aboutme = userData.aboutme
+    try {
+        const result = await foundUser.save() 
+        res.status(200).json(result)
+    } catch (err) {
+        res.status(401).json({'error': err})
+    }
+}
+
 module.exports = { 
     handleNewUser,
     handleLogin,
     handleRefreshToken,
     handleLogout,
     getUserData,
-    getUserProfile
+    getUserProfile,
+    updateUserData
 }
