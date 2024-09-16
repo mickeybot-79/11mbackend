@@ -16,4 +16,6 @@ router.get('/profile/:id', authController.getUserProfile)
 
 router.put('/update', authController.updateUserData)
 
+router.delete('/delete', authController.deleteUser)
+
 module.exports = router

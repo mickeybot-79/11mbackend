@@ -132,7 +132,9 @@ const getUserData = async (req, res) => {
     const userId = req.url.split('/')[2]
     if (userId !== 'noUser') {
         const foundUser = await User.findOne({ userId: userId }).exec()
+        if (!foundUser) return res.sendStatus(404)
         const returnData = {
+            userId,
             username: foundUser.username,
             password: foundUser.password,
             image: foundUser.image,
@@ -177,6 +179,15 @@ const updateUserData = async (req, res) => {
     }
 }
 
+const deleteUser = async (req, res) => {
+    const { userId } = req.body
+    const foundUser = await User.findOne({ userId: userId }).exec()
+    if (!foundUser) return res.sendStatus(404)
+    await User.deleteOne({ userId: userId })
+    res.clearCookie('jwt', {httpOnly: true, sameSite: 'None', secure:true})
+    res.status(200).json({'message': 'Cuenta eliminada'})
+}
+
 module.exports = { 
     handleNewUser,
     handleLogin,
@@ -184,5 +195,6 @@ module.exports = {
     handleLogout,
     getUserData,
     getUserProfile,
-    updateUserData
+    updateUserData,
+    deleteUser
 }
