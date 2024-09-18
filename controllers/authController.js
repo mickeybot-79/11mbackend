@@ -172,8 +172,8 @@ const updateUserData = async (req, res) => {
     foundUser.image = userData.image
     foundUser.aboutme = userData.aboutme
     try {
-        const result = await foundUser.save() 
-        res.status(200).json(result)
+        await foundUser.save() 
+        res.status(200).json({'message': 'Información de usuario actualizada correctamente'})
     } catch (err) {
         res.status(401).json({'error': err})
     }

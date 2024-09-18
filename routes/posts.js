@@ -15,6 +15,6 @@ router.post('/tags/new', postsController.addTag)
 
 router.get('/tags', postsController.getTags)
 
-//router.post('/share', shareController.shareTest)
+router.put('/edit', postsController.editPost)
 
 module.exports = router

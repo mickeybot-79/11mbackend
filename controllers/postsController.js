@@ -123,4 +123,28 @@ const getTags = async (req, res) => {
     res.json(allTags)
 }
 
-module.exports = { getPosts, createPost, addComment, addReply, addTag, getTags }
+const editPost = async (req, res) => {
+    const {
+        postId,
+        title,
+        heading,
+        content,
+        thumbnail,
+        imgDesc,
+        imgCred,
+        tags,
+        insPost
+    } = req.body
+    const foundPost = await Post.findOne({ searchField: postId }).exec()
+    
+}
+
+module.exports = { 
+    getPosts, 
+    createPost, 
+    addComment, 
+    addReply, 
+    addTag, 
+    getTags,
+    editPost
+}
