@@ -29,7 +29,7 @@ const createPost = async (req, res) => {
     //const extension = thumbnail.split('/')[1].split(';')[0]
     //const fileExtension = extension === 'jpeg' ? 'jpg' : extension === 'png' ? 'png' : 'webp'
     const authorUser = await User.findOne({ userId: authorId }).exec()
-    const shareText = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="theme-color" content="#000000" /><meta name="og:type" content="object" /><meta name="og:url" content="https://oncemetros.onrender.com/post/${searchField}" /><meta name="og:title" content="${title}" /><meta name="og:description" content="${heading.split('\n')[0]}" /><meta name="og:image" content="${thumbnail}" /><meta http-equiv="refresh" content="1; https://oncemetros.onrender.com/post/${searchField}" /></head><body></body></html>`
+    const shareText = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="theme-color" content="#000000"/><meta property="og:url" content="https://oncemetros.onrender.com/post/${searchField}"/><meta property="og:type" content="article"/><meta property="og:title" content="${title}"/><meta property="og:description" content="${heading.split('\n')[0]}"/><meta property="og:image" content="${thumbnail}"/><meta http-equiv="refresh" content="1; https://oncemetros.onrender.com/post/${searchField}"/></head><body></body></html>`
     try {
         const result = await Post.create({
             title,
@@ -76,8 +76,8 @@ const addComment = async (req, res) => {
         replies: [],
         searchField
     })
-    const result = await currentPost.save()
-    res.status(200).json(result)
+    await currentPost.save()
+    res.status(200).json({'message': 'Comment added'})
 }
 
 const addReply = async (req, res) => {
@@ -136,7 +136,39 @@ const editPost = async (req, res) => {
         insPost
     } = req.body
     const foundPost = await Post.findOne({ searchField: postId }).exec()
-    
+    foundPost.title = title
+    foundPost.heading = heading
+    foundPost.content = content
+    foundPost.thumbnail = thumbnail
+    foundPost.imgDesc = imgDesc
+    foundPost.imgCred = imgCred
+    foundPost.tags = tags
+    foundPost.insPost = insPost
+    await foundPost.save()
+    res.status(200).json({'message': 'Post updated'})
+}
+
+const addView = async (req, res) => {
+    const { post, userId } = req.body
+    const currentPost = await Post.findOne({ searchField: post }).exec()
+    if (!userId) {
+        currentPost.views++
+        await currentPost.save()
+        res.status(200).json({'message': 'View added'})
+    } else if (!currentPost.viewedBy.includes(userId)) {
+        currentPost.views++
+        currentPost.viewedBy.push(userId)
+        await currentPost.save()
+        res.status(200).json({'message': 'View added'})
+    } else {
+        res.sendStatus(201)
+    }
+}
+
+const deletePost = async (req, res) => {
+    const { post } = req.body
+    await Post.deleteOne({ searchField: post })
+    res.status(200).json({'message': 'Publicación eliminada'})
 }
 
 module.exports = { 
@@ -146,5 +178,7 @@ module.exports = {
     addReply, 
     addTag, 
     getTags,
-    editPost
+    editPost,
+    addView,
+    deletePost
 }

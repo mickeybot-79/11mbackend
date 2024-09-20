@@ -17,4 +17,10 @@ router.get('/tags', postsController.getTags)
 
 router.put('/edit', postsController.editPost)
 
+router.post('/views', postsController.addView)
+
+router.delete('/delete', postsController.deletePost)
+
+//router.post('/share', shareController.shareTest)
+
 module.exports = router
