@@ -10,6 +10,7 @@ const connectDB = require('./config/dbConn')
 const PORT = process.env.PORT || 3500
 
 const Post = require('./model/Post')
+const jwt = require('jsonwebtoken')
 
 connectDB()
 
@@ -18,6 +19,19 @@ app.get('/share/:id', async (req, res) => {
    const selectedPost = await Post.findOne({ searchField: post }).exec()
    res.send(selectedPost.share)
 })
+
+app.get('/verify/:token', (req, res)=>{
+   const {token} = req.params;
+   jwt.verify(token, process.env.PASSWORD_TOKEN_SECRET, function(err, decoded) {
+       if (err) {
+           console.log(err);
+           res.send(`Email verification failed, 
+                   possibly the link is invalid or expired`);
+       } else {
+           res.send("Email verifified successfully");
+       }
+   });
+});
 
 app.use(credentials)
 

@@ -1,6 +1,7 @@
 const User = require('../model/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer')
 const {v4 : uuid} = require('uuid')
 
 const handleNewUser = async (req, res) => {
@@ -113,6 +114,45 @@ const handleRefreshToken = async (req,res) => {
     )
 }
 
+const resetPassword = async (req,res) => {
+    const { email } = req.body
+    const transporter = nodemailer.createTransport({
+        service: 'hotmail',
+        auth: {
+            user: secure_configuration.EMAIL_USERNAME,
+            pass: secure_configuration.PASSWORD
+        }
+    });
+    const token = jwt.sign(
+        {
+            "UserInfo": {
+                "username": foundUser.username,
+                "id": foundUser.userId
+            }
+        },
+        process.env.PASSWORD_TOKEN_SECRET,
+        { expiresIn: '10m' }
+    )  
+    
+    const mailConfigurations = {
+        from: 'michaelperezvezoli@hotmail.com',
+        to: email,
+        subject: 'Email Verification',
+        
+        text: `Hi! There, You have recently visited 
+               our website and entered your email.
+               Please follow the given link to verify your email
+               http://localhost:3000/verify/${token} 
+               Thanks`
+    };
+    
+    transporter.sendMail(mailConfigurations, function(error, info){
+        if (error) throw Error(error);
+        console.log('Email Sent Successfully');
+        console.log(info);
+    });
+}
+
 const handleLogout = async (req,res) => {
     const cookies = req.cookies
     if (!cookies?.jwt) return res.sendStatus(204)
@@ -143,7 +183,7 @@ const getUserData = async (req, res) => {
         }
         res.json(returnData)
     } else {
-        res.sendStatus(204)
+        res.status(200).json({'user': 'no user'})
     }
 }
 

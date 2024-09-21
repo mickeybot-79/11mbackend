@@ -64,27 +64,33 @@ const createPost = async (req, res) => {
 const addComment = async (req, res) => {
     const {
         post,
-        user,
+        userId,
+        username,
+        image,
         content,
     } = req.body
     const currentPost = await Post.findOne({ searchField: post }).exec()
     const searchField = uuid()
     currentPost.comments.push({
-        user,
+        userId,
+        username,
+        image,
         date: Date.now(),
         content,
         replies: [],
         searchField
     })
-    await currentPost.save()
-    res.status(200).json({'message': 'Comment added'})
+    const result = await currentPost.save()
+    res.status(200).json(result)
 }
 
 const addReply = async (req, res) => {
     const {
         post,
         comment,
-        user,
+        userId,
+        username,
+        image,
         content,
         replyTo
     } = req.body
@@ -92,7 +98,9 @@ const addReply = async (req, res) => {
     const currentComment = currentPost.comments.filter(comm => comm.searchField === comment)[0]
     const commentIndex = currentPost.comments.indexOf(currentComment)
     currentPost.comments[commentIndex].replies.push({
-        user,
+        userId,
+        username,
+        image,
         date: Date.now(),
         content,
         replyTo

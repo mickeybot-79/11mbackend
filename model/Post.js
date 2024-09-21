@@ -2,14 +2,18 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const replySchema = new Schema({
-    user: String,
+    userId: String,
+    username: String,
+    image: String,
     date: String,
     content: String,
     replyTo: String
 })
 
 const commentSchema = new Schema({
-    user: String,
+    userId: String,
+    username: String,
+    image: String,
     date: String,
     content: String,
     replies: [replySchema],
