@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer')
 const {v4 : uuid} = require('uuid')
 
 const handleNewUser = async (req, res) => {
-    const { username, password, image, aboutme } = req.body
+    const { username, password, email, image, aboutme } = req.body
     const duplicate = await User.findOne({ username: username }).exec()
     if (duplicate) return res.status(409).json({'error': 'El nombre de usuario ya está en uso.'})
     try {
@@ -15,6 +15,7 @@ const handleNewUser = async (req, res) => {
         const result = await User.create({
             username,
             password: hashedPwd,
+            email,
             image,
             aboutme,
             createdOn: today,
@@ -115,42 +116,45 @@ const handleRefreshToken = async (req,res) => {
 }
 
 const resetPassword = async (req,res) => {
-    const { email } = req.body
+    const { username } = req.body
+    const foundUser = await User.findOne({ username: username }).exec()
+    if (!foundUser) res.status(404).json({'error': 'Usuario no encontrado'})
     const transporter = nodemailer.createTransport({
         service: 'hotmail',
         auth: {
-            user: secure_configuration.EMAIL_USERNAME,
-            pass: secure_configuration.PASSWORD
+            user: process.env.EMAIL_ADDRESS,
+            pass: process.env.EMAIL_PASSWORD
         }
-    });
+    })
     const token = jwt.sign(
         {
-            "UserInfo": {
-                "username": foundUser.username,
-                "id": foundUser.userId
-            }
+            "username": foundUser.username
         },
         process.env.PASSWORD_TOKEN_SECRET,
         { expiresIn: '10m' }
     )  
     
     const mailConfigurations = {
-        from: 'michaelperezvezoli@hotmail.com',
-        to: email,
+        from: process.env.EMAIL_ADDRESS,
+        to: foundUser.email,
         subject: 'Email Verification',
         
-        text: `Hi! There, You have recently visited 
-               our website and entered your email.
-               Please follow the given link to verify your email
-               http://localhost:3000/verify/${token} 
-               Thanks`
-    };
+        text: `Hola,
+               Hemos recibido una solicitud de recuperación de contraseña de tu cuenta de Los 11 Metros.
+               Por favor, sigue este enlace para restablecer tu contraseña: 
+               http://localhost:3500/verify/${token}
+               Gracias`
+    }
     
     transporter.sendMail(mailConfigurations, function(error, info){
-        if (error) throw Error(error);
-        console.log('Email Sent Successfully');
-        console.log(info);
-    });
+        if (error) {
+            //throw Error(error)
+            res.json({'error': error})
+        }
+        console.log('Email Sent Successfully')
+        console.log(info)
+        res.json(info)
+    })
 }
 
 const handleLogout = async (req,res) => {
@@ -232,6 +236,7 @@ module.exports = {
     handleNewUser,
     handleLogin,
     handleRefreshToken,
+    resetPassword,
     handleLogout,
     getUserData,
     getUserProfile,

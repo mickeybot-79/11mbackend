@@ -18,4 +18,6 @@ router.put('/update', authController.updateUserData)
 
 router.delete('/delete', authController.deleteUser)
 
+router.post('/pass', authController.resetPassword)
+
 module.exports = router

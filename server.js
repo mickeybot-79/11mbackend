@@ -21,17 +21,17 @@ app.get('/share/:id', async (req, res) => {
 })
 
 app.get('/verify/:token', (req, res)=>{
-   const {token} = req.params;
+   const {token} = req.params
    jwt.verify(token, process.env.PASSWORD_TOKEN_SECRET, function(err, decoded) {
        if (err) {
-           console.log(err);
+           console.log(err)
            res.send(`Email verification failed, 
-                   possibly the link is invalid or expired`);
+                   possibly the link is invalid or expired`)
        } else {
-           res.send("Email verifified successfully");
+           res.send("Email verifified successfully")
        }
-   });
-});
+   })
+})
 
 app.use(credentials)
 
