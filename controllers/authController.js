@@ -118,43 +118,50 @@ const handleRefreshToken = async (req,res) => {
 const resetPassword = async (req,res) => {
     const { username } = req.body
     const foundUser = await User.findOne({ username: username }).exec()
-    if (!foundUser) res.status(404).json({'error': 'Usuario no encontrado'})
-    const transporter = nodemailer.createTransport({
-        service: 'hotmail',
-        auth: {
-            user: process.env.EMAIL_ADDRESS,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    })
-    const token = jwt.sign(
-        {
-            "username": foundUser.username
-        },
-        process.env.PASSWORD_TOKEN_SECRET,
-        { expiresIn: '10m' }
-    )  
-    
-    const mailConfigurations = {
-        from: process.env.EMAIL_ADDRESS,
-        to: foundUser.email,
-        subject: 'Email Verification',
+    if (!foundUser) {
+        res.status(404).json({'error': 'No user.'})
+    } else if (!foundUser.email) {
+        res.status(404).json({'error': 'No email.'})
+    } else {
+        console.log(process.env.EMAIL_ADDRESS)
+        console.log(process.env.EMAIL_PASSWORD)
+        const transporter = nodemailer.createTransport({
+            service: 'hotmail',
+            auth: {
+                user: process.env.EMAIL_ADDRESS,
+                pass: process.env.EMAIL_PASSWORD
+            }
+        })
+        const token = jwt.sign(
+            {
+                "username": foundUser.username
+            },
+            process.env.PASSWORD_TOKEN_SECRET,
+            { expiresIn: '10m' }
+        )  
         
-        text: `Hola,
-               Hemos recibido una solicitud de recuperación de contraseña de tu cuenta de Los 11 Metros.
-               Por favor, sigue este enlace para restablecer tu contraseña: 
-               http://localhost:3500/verify/${token}
-               Gracias`
-    }
-    
-    transporter.sendMail(mailConfigurations, function(error, info){
-        if (error) {
-            //throw Error(error)
-            res.json({'error': error})
+        const mailConfigurations = {
+            from: process.env.EMAIL_ADDRESS,
+            to: foundUser.email,
+            subject: 'Email Verification',
+            
+            text: `Hola,
+                   Hemos recibido una solicitud de recuperación de contraseña de tu cuenta de Los 11 Metros.
+                   Por favor, sigue este enlace para restablecer tu contraseña: 
+                   http://localhost:3500/verify/${token}
+                   Gracias`
         }
-        console.log('Email Sent Successfully')
-        console.log(info)
-        res.json(info)
-    })
+        
+        transporter.sendMail(mailConfigurations, function(error, info){
+            if (error) {
+                //throw Error(error)
+                res.json({'error': error})
+            }
+            console.log('Email Sent Successfully')
+            console.log(info)
+            res.json(info)
+        })
+    }
 }
 
 const handleLogout = async (req,res) => {
@@ -181,6 +188,7 @@ const getUserData = async (req, res) => {
             userId,
             username: foundUser.username,
             password: foundUser.password,
+            email: foundUser.email,
             image: foundUser.image,
             aboutme: foundUser.aboutme,
             roles: foundUser.roles
