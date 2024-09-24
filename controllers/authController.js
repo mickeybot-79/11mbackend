@@ -116,11 +116,11 @@ const handleRefreshToken = async (req,res) => {
 }
 
 const resetPassword = async (req,res) => {
-    const { username } = req.body
+    const { username, email } = req.body
     const foundUser = await User.findOne({ username: username }).exec()
     if (!foundUser) {
         res.status(404).json({'error': 'No user.'})
-    } else if (!foundUser.email) {
+    } else if (!foundUser.email && !email) {
         res.status(404).json({'error': 'No email.'})
     } else {
         console.log(process.env.EMAIL_ADDRESS)
@@ -134,7 +134,7 @@ const resetPassword = async (req,res) => {
         })
         const token = jwt.sign(
             {
-                "username": foundUser.username
+                "userId": foundUser.userId
             },
             process.env.PASSWORD_TOKEN_SECRET,
             { expiresIn: '10m' }
@@ -142,7 +142,7 @@ const resetPassword = async (req,res) => {
         
         const mailConfigurations = {
             from: process.env.EMAIL_ADDRESS,
-            to: foundUser.email,
+            to: foundUser.email || email,
             subject: 'Email Verification',
             
             text: `Hola,
