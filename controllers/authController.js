@@ -1,6 +1,7 @@
 const User = require('../model/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const { jwtDecode } = require('jwt-decode')
 const nodemailer = require('nodemailer')
 const {v4 : uuid} = require('uuid')
 
@@ -134,7 +135,8 @@ const resetPassword = async (req,res) => {
         })
         const token = jwt.sign(
             {
-                "userId": foundUser.userId
+                "userId": foundUser.userId,
+                "username": foundUser.username
             },
             process.env.PASSWORD_TOKEN_SECRET,
             { expiresIn: '10m' }
@@ -161,6 +163,50 @@ const resetPassword = async (req,res) => {
             console.log(info)
             res.json(info)
         })
+    }
+}
+
+const updateUserPassword = async (req,res) => {
+    const { token, password } = req.body
+    let userId
+    let foundUser
+    jwt.verify(
+        token, 
+        process.env.PASSWORD_TOKEN_SECRET, 
+        (err, decoded) => {
+        if (err) {
+            return res.status(403).json({'error': err})
+        } else {
+            userId = decoded.userId
+        }
+    })
+    foundUser = await User.findOne({ userId: userId }).exec()
+    if (!foundUser) {
+        res.status(404).json({'error': 'Usuario no encontrado.'})
+    } else {
+        const hashedPwd = await bcrypt.hash(password, 10)
+        foundUser.password = hashedPwd
+        await foundUser.save()
+        const accessToken = jwt.sign(
+            {
+                "UserInfo": {
+                    "username": foundUser.username,
+                    "id": foundUser.userId,
+                    "roles": foundUser.roles
+                }
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: '1d' }
+        )
+        const refreshToken = jwt.sign(
+            { "username": foundUser.username },
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: '90d' }
+        )
+        foundUser.refreshToken = refreshToken
+        await foundUser.save()
+        res.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000  * 90, sameSite: 'None', secure: true})
+        res.status(200).json({ accessToken })
     }
 }
 
@@ -245,6 +291,7 @@ module.exports = {
     handleLogin,
     handleRefreshToken,
     resetPassword,
+    updateUserPassword,
     handleLogout,
     getUserData,
     getUserProfile,

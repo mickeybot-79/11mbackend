@@ -20,4 +20,6 @@ router.delete('/delete', authController.deleteUser)
 
 router.post('/pass', authController.resetPassword)
 
+router.post('/reset', authController.updateUserPassword)
+
 module.exports = router
