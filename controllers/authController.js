@@ -153,7 +153,7 @@ const resetPassword = async (req,res) => {
                 Hola,
                 Hemos recibido una solicitud de recuperación de contraseña de tu cuenta de Los 11 Metros.
                 Por favor, sigue este enlace para restablecer tu contraseña: 
-                https://oncemetros.onrender.com/verify/${token}
+                https://los-11-metros.onrender.com/verify/${token}
                 Gracias`
         }
         
