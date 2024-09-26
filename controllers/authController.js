@@ -136,7 +136,7 @@ const resetPassword = async (req,res) => {
         //     }
         // })
         const transporter = nodemailer.createTransport({
-            host: "smtp-mail.outlook.com",
+            host: "smtp.gmail.com",
             port: 587,
             secure: false,
             auth: {
@@ -168,7 +168,7 @@ const resetPassword = async (req,res) => {
 
         async function main() {
             const info = await transporter.sendMail({
-                from: 'michaelperezvezoli@hotmail.com', // sender address
+                from: process.env.EMAIL_ADDRESS, // sender address
                 to: "michaelperezvezoli@hotmail.com", // list of receivers
                 subject: "Hello ✔", // Subject line
                 text: "Hello world?", // plain text body
