@@ -156,16 +156,31 @@ const resetPassword = async (req,res) => {
                 https://los-11-metros.onrender.com/verify/${token}
                 Gracias`
         }
+
+        async function main() {
+            const info = await transporter.sendMail({
+                from: 'michaelperezvezoli@hotmail.com', // sender address
+                to: "michaelperezvezoli@hotmail.com", // list of receivers
+                subject: "Hello ✔", // Subject line
+                text: "Hello world?", // plain text body
+                html: "<b>Hello world?</b>", // html body
+            })
+
+            console.log("Message sent: %s", info.messageId)
+            res.json({"Message sent": info.messageId})
+        }
+
+        main().catch(console.error)
         
-        transporter.sendMail(mailConfigurations, function(error, info){
-            if (error) {
-                //throw Error(error)
-                res.json({'error': error})
-            }
-            console.log('Email Sent Successfully')
-            console.log(info)
-            res.json(info)
-        })
+        // transporter.sendMail(mailConfigurations, function(error, info){
+        //     if (error) {
+        //         //throw Error(error)
+        //         res.json({'error': error})
+        //     }
+        //     console.log('Email Sent Successfully')
+        //     console.log(info)
+        //     res.json(info)
+        // })
     }
 }
 
