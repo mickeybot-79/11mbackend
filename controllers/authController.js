@@ -124,18 +124,8 @@ const resetPassword = async (req,res) => {
     } else if (!foundUser.email && !email) {
         res.status(404).json({'error': 'No email.'})
     } else {
-        console.log('email:', process.env.EMAIL_ADDRESS)
         const sendEmail = process.env.EMAIL_ADDRESS
-        console.log('password:', process.env.EMAIL_PASSWORD)
         const password = process.env.EMAIL_PASSWORD
-        //const password = process.env.EMAIL_PASSWORD
-        // const transporter = nodemailer.createTransport({
-        //     service: 'hotmail',
-        //     auth: {
-        //         user: process.env.EMAIL_ADDRESS,
-        //         pass: process.env.EMAIL_PASSWORD
-        //     }
-        // })
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 587,
@@ -157,8 +147,7 @@ const resetPassword = async (req,res) => {
         const mailConfigurations = {
             from: sendEmail,
             to: foundUser.email || email,
-            subject: 'Email Verification',
-            
+            subject: 'Solicitud de cambio de contraseña',
             text: `
                 Hola,
                 Hemos recibido una solicitud de recuperación de contraseña de tu cuenta de Los 11 Metros.
@@ -167,36 +156,12 @@ const resetPassword = async (req,res) => {
                 Gracias`
         }
 
-        // async function main() {
-        //     const info = await transporter.sendMail({
-        //         from: process.env.EMAIL_ADDRESS, // sender address
-        //         to: "michaelperezvezoli@hotmail.com", // list of receivers
-        //         subject: "Hello ✔", // Subject line
-        //         text: "Hello world?", // plain text body
-        //         html: "<b>Hello world?</b>", // html body
-        //     })
-
-        //     console.log("Message sent: %s", info.messageId)
-        //     res.json({"Message sent": info.messageId})
-        // }
-
-        async function main() {
+        const main = async () => {
             const info = await transporter.sendMail(mailConfigurations)
-            console.log("Message sent: %s", info.messageId)
             res.json({"Message sent": info.messageId})
         }
 
         main().catch(console.error)
-        
-        // transporter.sendMail(mailConfigurations, function(error, info){
-        //     if (error) {
-        //         //throw Error(error)
-        //         res.json({'error': error})
-        //     }
-        //     console.log('Email Sent Successfully')
-        //     console.log(info)
-        //     res.json(info)
-        // })
     }
 }
 
@@ -219,8 +184,6 @@ const updateUserPassword = async (req,res) => {
         res.status(404).json({'error': 'Usuario no encontrado.'})
     } else {
         const hashedPwd = await bcrypt.hash(password, 10)
-        foundUser.password = hashedPwd
-        await foundUser.save()
         const accessToken = jwt.sign(
             {
                 "UserInfo": {
@@ -237,6 +200,7 @@ const updateUserPassword = async (req,res) => {
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: '90d' }
         )
+        foundUser.password = hashedPwd
         foundUser.refreshToken = refreshToken
         await foundUser.save()
         res.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000  * 90, sameSite: 'None', secure: true})
