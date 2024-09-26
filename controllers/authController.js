@@ -125,13 +125,13 @@ const resetPassword = async (req,res) => {
         res.status(404).json({'error': 'No email.'})
     } else {
         console.log('email:', process.env.EMAIL_ADDRESS)
-        const email = process.env.EMAIL_ADDRESS
+        const sendEmail = process.env.EMAIL_ADDRESS
         console.log('password:', process.env.EMAIL_PASSWORD)
         const password = process.env.EMAIL_PASSWORD
         const transporter = nodemailer.createTransport({
             service: 'hotmail',
             auth: {
-                user: email,
+                user: sendEmail,
                 pass: password
             }
         })
@@ -145,15 +145,16 @@ const resetPassword = async (req,res) => {
         )  
         
         const mailConfigurations = {
-            from: process.env.EMAIL_ADDRESS,
+            from: sendEmail,
             to: foundUser.email || email,
             subject: 'Email Verification',
             
-            text: `Hola,
-                   Hemos recibido una solicitud de recuperación de contraseña de tu cuenta de Los 11 Metros.
-                   Por favor, sigue este enlace para restablecer tu contraseña: 
-                   https://oncemetros.onrender.com/verify/${token}
-                   Gracias`
+            text: `
+                Hola,
+                Hemos recibido una solicitud de recuperación de contraseña de tu cuenta de Los 11 Metros.
+                Por favor, sigue este enlace para restablecer tu contraseña: 
+                https://oncemetros.onrender.com/verify/${token}
+                Gracias`
         }
         
         transporter.sendMail(mailConfigurations, function(error, info){
