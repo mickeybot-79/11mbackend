@@ -136,7 +136,7 @@ const resetPassword = async (req,res) => {
         //     }
         // })
         const transporter = nodemailer.createTransport({
-            host: "hotmail",
+            host: "smtp.hotmail.com",
             port: 587,
             secure: false,
             auth: {
