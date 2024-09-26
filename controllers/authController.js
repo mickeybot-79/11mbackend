@@ -167,15 +167,21 @@ const resetPassword = async (req,res) => {
                 Gracias`
         }
 
-        async function main() {
-            const info = await transporter.sendMail({
-                from: process.env.EMAIL_ADDRESS, // sender address
-                to: "michaelperezvezoli@hotmail.com", // list of receivers
-                subject: "Hello ✔", // Subject line
-                text: "Hello world?", // plain text body
-                html: "<b>Hello world?</b>", // html body
-            })
+        // async function main() {
+        //     const info = await transporter.sendMail({
+        //         from: process.env.EMAIL_ADDRESS, // sender address
+        //         to: "michaelperezvezoli@hotmail.com", // list of receivers
+        //         subject: "Hello ✔", // Subject line
+        //         text: "Hello world?", // plain text body
+        //         html: "<b>Hello world?</b>", // html body
+        //     })
 
+        //     console.log("Message sent: %s", info.messageId)
+        //     res.json({"Message sent": info.messageId})
+        // }
+
+        async function main() {
+            const info = await transporter.sendMail(mailConfigurations)
             console.log("Message sent: %s", info.messageId)
             res.json({"Message sent": info.messageId})
         }
