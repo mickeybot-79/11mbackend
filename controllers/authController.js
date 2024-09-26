@@ -124,8 +124,8 @@ const resetPassword = async (req,res) => {
     } else if (!foundUser.email && !email) {
         res.status(404).json({'error': 'No email.'})
     } else {
-        console.log(process.env.EMAIL_ADDRESS)
-        console.log(process.env.EMAIL_PASSWORD)
+        console.log('email:', process.env.EMAIL_ADDRESS)
+        console.log('password:', process.env.EMAIL_PASSWORD)
         const transporter = nodemailer.createTransport({
             service: 'hotmail',
             auth: {
@@ -150,7 +150,7 @@ const resetPassword = async (req,res) => {
             text: `Hola,
                    Hemos recibido una solicitud de recuperación de contraseña de tu cuenta de Los 11 Metros.
                    Por favor, sigue este enlace para restablecer tu contraseña: 
-                   http://localhost:3500/verify/${token}
+                   https://oncemetros.onrender.com/verify/${token}
                    Gracias`
         }
         

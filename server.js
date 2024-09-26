@@ -27,8 +27,8 @@ app.get('/verify/:token', (req, res)=>{
            console.log(err)
            res.send('Email verification failed, possibly the link is invalid or expired')
        } else {
-           res.send(`<!DOCTYPE html><html lang="en"><head><meta http-equiv="refresh" content="1; http://localhost:3000/reset/${token}"/></head><body></body></html>`)
-           //res.send(`<!DOCTYPE html><html lang="en"><head><meta http-equiv="refresh" content="1; https://oncemetros.onrender.com/reset/${token}"/></head><body></body></html>`)
+           //res.send(`<!DOCTYPE html><html lang="en"><head><meta http-equiv="refresh" content="1; http://localhost:3000/reset/${token}"/></head><body></body></html>`)
+           res.send(`<!DOCTYPE html><html lang="en"><head><meta http-equiv="refresh" content="1; https://oncemetros.onrender.com/reset/${token}"/></head><body></body></html>`)
        }
    })
 })
