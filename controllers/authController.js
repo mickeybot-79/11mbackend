@@ -131,8 +131,8 @@ const resetPassword = async (req,res) => {
         const transporter = nodemailer.createTransport({
             service: 'hotmail',
             auth: {
-                user: sendEmail,
-                pass: password
+                user: 'michaelperezvezoli@hotmail.com',
+                pass: 'Ebagabcbagfefe1'
             }
         })
         const token = jwt.sign(
