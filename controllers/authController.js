@@ -125,12 +125,14 @@ const resetPassword = async (req,res) => {
         res.status(404).json({'error': 'No email.'})
     } else {
         console.log('email:', process.env.EMAIL_ADDRESS)
+        const email = process.env.EMAIL_ADDRESS
         console.log('password:', process.env.EMAIL_PASSWORD)
+        const password = process.env.EMAIL_PASSWORD
         const transporter = nodemailer.createTransport({
             service: 'hotmail',
             auth: {
-                user: process.env.EMAIL_ADDRESS,
-                pass: process.env.EMAIL_PASSWORD
+                user: email,
+                pass: password
             }
         })
         const token = jwt.sign(
