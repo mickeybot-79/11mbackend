@@ -127,6 +127,7 @@ const resetPassword = async (req,res) => {
         console.log('email:', process.env.EMAIL_ADDRESS)
         const sendEmail = process.env.EMAIL_ADDRESS
         console.log('password:', process.env.EMAIL_PASSWORD)
+        const password = process.env.EMAIL_PASSWORD
         //const password = process.env.EMAIL_PASSWORD
         // const transporter = nodemailer.createTransport({
         //     service: 'hotmail',
@@ -140,8 +141,8 @@ const resetPassword = async (req,res) => {
             port: 587,
             secure: false,
             auth: {
-              user: process.env.EMAIL_ADDRESS,
-              pass: process.env.EMAIL_PASSWORD,
+              user: sendEmail,
+              pass: password,
             },
           });
         const token = jwt.sign(
