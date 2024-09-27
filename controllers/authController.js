@@ -152,7 +152,7 @@ const resetPassword = async (req,res) => {
                 Hola,
                 Hemos recibido una solicitud de recuperación de contraseña de tu cuenta de Los 11 Metros.
                 Por favor, sigue este enlace para restablecer tu contraseña: 
-                https://los-11-metros.onrender.com/verify/${token}
+                https://oncemetros.onrender.com/reset/${token}
                 Gracias`
         }
 
@@ -224,7 +224,7 @@ const handleLogout = async (req,res) => {
 }
 
 const getUserData = async (req, res) => {
-    const userId = req.url.split('/')[2]
+    const {userId} = req.params
     if (userId !== 'noUser') {
         const foundUser = await User.findOne({ userId: userId }).exec()
         if (!foundUser) return res.sendStatus(404)
@@ -244,7 +244,7 @@ const getUserData = async (req, res) => {
 }
 
 const getUserProfile = async (req, res) => {
-    const userId = req.url.split('/')[2]
+    const {userId} = req.params
     const foundUser = await User.findOne({ userId: userId }).exec()
     if (!foundUser) return res.sendStatus(404) //'error': 'User not found'
     const infoToReturn = {
@@ -284,6 +284,23 @@ const deleteUser = async (req, res) => {
     res.status(200).json({'message': 'Cuenta eliminada'})
 }
 
+const verifyResetToken = async (req, res) => {
+    const {token} = req.body
+    jwt.verify(
+        token, 
+        process.env.PASSWORD_TOKEN_SECRET, 
+        function(err, decoded) {
+        if (err) {
+            console.log(err)
+            res.status(403).send({
+                'result': 'Expired'
+            })
+        } else {
+            res.status(200).send({'result': 'Success'})
+        }
+    })
+}
+
 module.exports = { 
     handleNewUser,
     handleLogin,
@@ -294,5 +311,6 @@ module.exports = {
     getUserData,
     getUserProfile,
     updateUserData,
-    deleteUser
+    deleteUser,
+    verifyResetToken
 }

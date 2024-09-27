@@ -10,9 +10,9 @@ router.get('/refresh', authController.handleRefreshToken)
 
 router.post('/logout', authController.handleLogout)
 
-router.get('/user/:id', authController.getUserData)
+router.get('/user/:userId', authController.getUserData)
 
-router.get('/profile/:id', authController.getUserProfile)
+router.get('/profile/:userId', authController.getUserProfile)
 
 router.put('/update', authController.updateUserData)
 
@@ -21,5 +21,7 @@ router.delete('/delete', authController.deleteUser)
 router.post('/pass', authController.resetPassword)
 
 router.post('/reset', authController.updateUserPassword)
+
+router.post('/verify', authController.verifyResetToken)
 
 module.exports = router
