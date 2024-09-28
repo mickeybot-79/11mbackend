@@ -141,7 +141,7 @@ const resetPassword = async (req,res) => {
                 "username": foundUser.username
             },
             process.env.PASSWORD_TOKEN_SECRET,
-            { expiresIn: '10m' }
+            { expiresIn: '1s' }
         )  
         
         const mailConfigurations = {
@@ -149,11 +149,17 @@ const resetPassword = async (req,res) => {
             to: foundUser.email || email,
             subject: 'Solicitud de cambio de contraseña',
             text: `
-                Hola,
-                Hemos recibido una solicitud de recuperación de contraseña de tu cuenta de Los 11 Metros.
-                Por favor, sigue este enlace para restablecer tu contraseña: 
-                https://oncemetros.onrender.com/reset/${token}
-                Gracias`
+            Hola,
+            Hemos recibido una solicitud de recuperación de contraseña de tu cuenta de Los 11 Metros.
+            Por favor, sigue este enlace para restablecer tu contraseña: 
+            http://localhost:3000/reset/${token}
+            Gracias`
+            // text: `
+            //     Hola,
+            //     Hemos recibido una solicitud de recuperación de contraseña de tu cuenta de Los 11 Metros.
+            //     Por favor, sigue este enlace para restablecer tu contraseña: 
+            //     https://oncemetros.onrender.com/reset/${token}
+            //     Gracias`
         }
 
         const main = async () => {
@@ -292,11 +298,11 @@ const verifyResetToken = async (req, res) => {
         function(err, decoded) {
         if (err) {
             console.log(err)
-            res.status(403).send({
+            res.status(403).json({
                 'result': 'Expired'
             })
         } else {
-            res.status(200).send({'result': 'Success'})
+            res.status(200).json({'result': 'Success'})
         }
     })
 }
