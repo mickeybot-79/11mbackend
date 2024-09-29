@@ -141,7 +141,7 @@ const resetPassword = async (req,res) => {
                 "username": foundUser.username
             },
             process.env.PASSWORD_TOKEN_SECRET,
-            { expiresIn: '1s' }
+            { expiresIn: '10m' }
         )  
         
         const mailConfigurations = {
