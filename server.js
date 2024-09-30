@@ -32,7 +32,7 @@ app.use(cookieParser())
 
 app.use('/auth', require('./routes/auth'))
 app.use('/posts', require('./routes/posts'))
-app.use('/pageView', require('./routes/page'))
+app.use('/page', require('./routes/page'))
 
 mongoose.connection.once('open', () => {
    console.log('Connected to MongoDB')

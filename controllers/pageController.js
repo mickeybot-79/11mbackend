@@ -24,4 +24,9 @@ const sendFeedback = async (req, res) => {
     res.status(201).json({'result': 'comment added'})
 }
 
-module.exports = { addPageView, getPageViews, sendFeedback }
+const getFeedback = async (req, res) => {
+    const allFeedback = await Feedback.find()
+    res.json(allFeedback)
+}
+
+module.exports = { addPageView, getPageViews, sendFeedback, getFeedback }

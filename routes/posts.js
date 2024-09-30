@@ -21,6 +21,6 @@ router.post('/views', postsController.addView)
 
 router.delete('/delete', postsController.deletePost)
 
-//router.post('/share', shareController.shareTest)
+router.post('/share', shareController.shareTest)
 
 module.exports = router
