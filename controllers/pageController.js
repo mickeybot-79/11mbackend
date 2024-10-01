@@ -14,9 +14,10 @@ const getPageViews = async (req, res) => {
 }
 
 const sendFeedback = async (req, res) => {
-    const { userId, type, content } = req.body
+    const { userId, username, type, content } = req.body
     await Feedback.create({
         userId,
+        username: username || 'Anónimo',
         type,
         content,
         date: Date.now()
