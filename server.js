@@ -14,7 +14,7 @@ const jwt = require('jsonwebtoken')
 
 connectDB()
 
-app.get('/share/:post', async (req, res) => {
+app.use('/share/:post', async (req, res) => {
    //const post = req.url.split('/')[2].split('?')[0]
    const { post } = req.params
    //console.log(post)
