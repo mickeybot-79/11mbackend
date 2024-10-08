@@ -237,7 +237,6 @@ const getUserData = async (req, res) => {
         const returnData = {
             userId,
             username: foundUser.username,
-            password: foundUser.password,
             email: foundUser.email,
             image: foundUser.image,
             aboutme: foundUser.aboutme,
@@ -273,6 +272,7 @@ const updateUserData = async (req, res) => {
     }
     foundUser.image = userData.image
     foundUser.aboutme = userData.aboutme
+    foundUser.email = userData.email
     try {
         await foundUser.save() 
         res.status(200).json({'message': 'Información de usuario actualizada correctamente'})
