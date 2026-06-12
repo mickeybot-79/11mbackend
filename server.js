@@ -36,6 +36,10 @@ app.use(express.urlencoded({limit: "500mb", extended: true, parameterLimit: 5000
 
 app.use(cookieParser())
 
+app.post('/wake', async (req, res) => {
+    res.send('ready')
+})
+
 app.use('/auth', require('./routes/auth'))
 app.use('/posts', require('./routes/posts'))
 app.use('/page', require('./routes/page'))
