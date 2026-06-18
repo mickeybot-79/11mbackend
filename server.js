@@ -26,6 +26,10 @@ app.use('/share/:post', async (req, res) => {
    }
 })
 
+app.post('/wake', async (req, res) => {
+    res.send('ready')
+})
+
 app.use(credentials)
 
 //app.use(cors())
@@ -35,10 +39,6 @@ app.use(express.json({limit: "500mb", extended: true}))
 app.use(express.urlencoded({limit: "500mb", extended: true, parameterLimit: 50000}))
 
 app.use(cookieParser())
-
-app.post('/wake', async (req, res) => {
-    res.send('ready')
-})
 
 app.use('/auth', require('./routes/auth'))
 app.use('/posts', require('./routes/posts'))
